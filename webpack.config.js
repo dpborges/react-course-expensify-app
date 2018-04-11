@@ -4,7 +4,7 @@ const path = require('path');
 // add plugin to extact css files from bundle.js
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-//  Note that entry was able to take a relative path while output and devserver require an 
+// Note that entry was able to take a relative path while output and devserver require an 
 // absolute path, hence why use path.join node.js function.
 
 module.exports = (env) => {
