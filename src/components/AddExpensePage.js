@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import ExpenseForm from './ExpenseForm';
-import { addExpense } from '../actions/expenses'
+import { startAddExpense } from '../actions/expenses'
 
 // NOTE:  Be sure to read comments on the original AddExpensePage within AddExpenseOrig.js file.
 // During lecture,  the component was converted from a functional component
@@ -14,7 +14,7 @@ import { addExpense } from '../actions/expenses'
 export class AddExpensePage extends React.Component {
 
     onSubmit = (expense) => {
-        this.props.addExpense(expense);
+        this.props.startAddExpense(expense);
         this.props.history.push('/');
     };
 
@@ -40,7 +40,7 @@ export class AddExpensePage extends React.Component {
 // use following:                              props.onSubmit(expense)
 // See the BEFORE and AFTER changes noted in the props of the  <ExpenseForm /> compoment above.
 const mapDispatchToProps = (dispatch) => ({
-        addExpense: (expense)  => dispatch(addExpense(expense))
+    startAddExpense: (expense)  => dispatch(startAddExpense(expense))
 });
 
 

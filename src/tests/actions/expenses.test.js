@@ -1,4 +1,11 @@
-import  {addExpense, editExpense, removeExpense } from '../../actions/expenses';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import  {startAddExpense, addExpense, editExpense, removeExpense } from '../../actions/expenses';
+import  expenses from '../fixtures/expenses';
+import { create } from 'domain';
+import database from '../../firebase/firebase';
+
+const createMockStore = configureMockStore([thunk]);
 
 test('should setup remove expense action object', () => {
     const action = removeExpense({ id: '123abc'});
@@ -7,8 +14,6 @@ test('should setup remove expense action object', () => {
         id:   '123abc'
     })
 });
-
-
 
 test('should setup edit expense action object', () => {
     const action = editExpense('123abc', { note: 'recommend to others'});
@@ -19,38 +24,85 @@ test('should setup edit expense action object', () => {
     })
 });
 
-
 test('should set up add expense action object with provided values', () => {
-    const expenseData = {
-        description: 'Rent', 
-        note: 'this was last months rent',
-        amount: '109500',  
-        createdAt: 1000 
-    }
-    const action = addExpense(expenseData);
+    const action = addExpense(expenses[2]);
     expect(action).toEqual({
         type: 'ADD_EXPENSE',        
-        expense: {
-            ...expenseData,
-            id: expect.any(String)     // Use any because uuid is dynamically generated
-        }
-    })
+        expense: expenses[2]
+    });    
 });
 
 
-test('should set up add expense action object with default values', () => {
+test('should add expense to database and redux store', (done) => {
+    const store = createMockStore({});
     const expenseData = {
-        description: '', 
+        description: 'Mouse',
+        amount: 3000, 
+        note: 'This one is better',
+        createdAt: 1000
+    }
+    
+    store.dispatch(startAddExpense(expenseData)).then(() => {
+       const actions = store.getActions();  // returns an array of actions from the mock store
+       expect(actions[0]).toEqual({        // confirm event was dispatch by startAddExpense
+           type: 'ADD_EXPENSE',
+           expense: {
+               id: expect.any(String),
+               ...expenseData
+           }
+       });
+       // Verify that expense was created in firebase database, which returns a promise
+       return database.ref(`expenses/${actions[0].expense.id}`).once('value');
+               
+    }).then((snapshot) => {
+        expect(snapshot.val()).toEqual(expenseData);
+        done();
+    });
+});
+
+test('should add expense with defaults to database and redux store', (done) => {
+    const store = createMockStore({});
+    const expenseDefaults = {
+        description: '',
+        amount: 0, 
         note: '',
-        amount: 0,  
         createdAt: 0
     }
-    const action = addExpense();
-    expect(action).toEqual({
-        type: 'ADD_EXPENSE',        
-        expense: {
-            ...expenseData,
-            id: expect.any(String)     // Use any because uuid is dynamically generated
-        }
-    })
+    
+    store.dispatch(startAddExpense({})).then(() => {
+       const actions = store.getActions();  // returns an array of actions from the mock store
+       expect(actions[0]).toEqual({        // confirm event was dispatch by startAddExpense
+           type: 'ADD_EXPENSE',
+           expense: {
+               id: expect.any(String),
+               ...expenseDefaults
+           }
+       });
+       // Verify that expense was created in firebase database, which returns a promise
+       return database.ref(`expenses/${actions[0].expense.id}`).once('value');
+               
+    }).then((snapshot) => {
+        expect(snapshot.val()).toEqual(expenseDefaults);
+        done();
+    });
 });
+
+
+
+
+
+
+// test('should set up add expense action object with default values', () => {
+//     const expenseData = {
+//         description: '', 
+//         note: '',
+//         amount: 0,  
+//         createdAt: 0
+//     }
+//     const action = addExpense(expenses[2]);
+//     expect(action).toEqual({
+//         type: 'ADD_EXPENSE',        
+//         expense: expense[2]
+//         }
+//     })
+// });
