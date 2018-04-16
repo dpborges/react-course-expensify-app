@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import database from '../firebase/firebase';
 
+
 // ADD_EXPENSE
 export const addExpense = (expense) => ({
     type: 'ADD_EXPENSE',
@@ -46,3 +47,33 @@ export const editExpense = (id, updates) => ({
     id,
     updates
 });
+
+//SET_EXPENSES; passes in array of all expenses in our fixture. This is called before
+//              each test case to initiale expenses.
+export const setExpenses = (expenses) => ({
+    type: 'SET_EXPENSES',
+    expenses
+});
+
+
+// Function used by redux-thunk middleware.
+// this function fetches data from firebase, parses data into an array, and dispatches
+// SET_EXPENSES
+export const startSetExpenses = () => {
+    return (dispatch) => {
+        // fetch data from firebase
+        const expenses = [];
+        return database.ref('expenses').once('value').then((snapshot) => {
+            // parse data into an array
+            snapshot.forEach((childSnapshot) => {
+                expenses.push({
+                    id: childSnapshot.key,
+                    ...childSnapshot.val()
+                });
+            });
+            console.log('array from database ', expenses);
+            // update redux store with data fetched from database
+            dispatch(setExpenses(expenses));
+        });
+    ;}
+};

@@ -7,7 +7,7 @@ const expensesReducer = (state = expensesReducerDefaultState, action) => {
         case 'REMOVE_EXPENSE':
             console.log(`remove expense action called with id ${action.id}`);
             return state.filter(({ id }) =>  id !==  action.id )
-        case 'EDIT_EXPENSE':
+       case 'EDIT_EXPENSE':
             return state.map((expense) => {
                 if (expense.id === action.id) {
                     return {
@@ -17,7 +17,9 @@ const expensesReducer = (state = expensesReducerDefaultState, action) => {
                 } else {
                     return expense;             // returns state changes to redux
                 }
-            })
+            });
+        case 'SET_EXPENSES':
+            return action.expenses;
         default: 
             return state;
     }
