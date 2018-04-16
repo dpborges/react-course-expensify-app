@@ -1,7 +1,6 @@
 import uuid from 'uuid';
 import database from '../firebase/firebase';
 
-
 // ADD_EXPENSE
 export const addExpense = (expense) => ({
     type: 'ADD_EXPENSE',
@@ -41,6 +40,20 @@ export const removeExpense = ( { id } = {}) => ({
     id
 });
 
+// Function used by middleware redux-thunk
+// This function takes id as an argument, removes expense from firebase
+// and dispatches an action to update redux store.
+export const startRemoveExpense = ({ id } = {}) => {
+    return (dispatch) => {
+        return database.ref(`expenses/${id}`).remove().then(() => {
+                // dispatch action to update redux store
+                dispatch(removeExpense({ id  }));
+        });
+    ;}
+};
+
+
+
 // EDIT_EXPENSE
 export const editExpense = (id, updates) => ({
     type: 'EDIT_EXPENSE',
@@ -71,7 +84,7 @@ export const startSetExpenses = () => {
                     ...childSnapshot.val()
                 });
             });
-            console.log('array from database ', expenses);
+            // console.log('array from database ', expenses);
             // update redux store with data fetched from database
             dispatch(setExpenses(expenses));
         });

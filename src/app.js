@@ -33,7 +33,7 @@ const jsx = (
 ReactDOM.render(<p>Loading.....</p>, document.getElementById('app'));
 
 store.dispatch(startSetExpenses()).then(() => {
-    // render application after fetching  an array of expenses from firebase
+    // render application after fetching an array of expenses from firebase and using it to set state
     ReactDOM.render(jsx, document.getElementById('app'));
 })
 

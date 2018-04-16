@@ -7,19 +7,19 @@ import { EditExpensePage } from '../../components/EditExpensePage';
 import expenses from '../fixtures/expenses';
 
 // Define variables globally.
-let editExpense, removeExpense, history, wrapper;
+let editExpense, startRemoveExpense, history, wrapper;
 
 // Do following before each test case
 beforeEach( () => {
     // set up props needed by EditExpensePage
     editExpense = jest.fn();             // Use a spy for onSubmit
-    removeExpense = jest.fn();           // Use a spy for onClick
+    startRemoveExpense = jest.fn();           // Use a spy for onClick
     history = { push: jest.fn() };       // Use a spy for push function (on the history object)
     // render component with shallow
     wrapper = shallow(
         <EditExpensePage 
             editExpense={editExpense} 
-            removeExpense={removeExpense}
+            startRemoveExpense={startRemoveExpense}
             expense={expenses[2]} 
             history={history} />
         );
@@ -48,6 +48,6 @@ test('should handle onClick to remove expense', () => {
      wrapper.find('button').simulate('click');
     // Ensure spies that were set up above get called with the correct information
     expect(history.push).toHaveBeenLastCalledWith('/');
-    expect(removeExpense).toHaveBeenLastCalledWith({id: expenses[2].id});
+    expect(startRemoveExpense).toHaveBeenLastCalledWith({id: expenses[2].id});
     // expect(wrapper).toMatchSnapshot();
 });

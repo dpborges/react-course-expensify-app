@@ -75,12 +75,12 @@ import * as firebase from 'firebase';
 //     database.ref('age').set(32);
 //   }, 7000);
 
-//  // remove all subscriptions
+//  // unsubscribe all subscriptions
 //  setTimeout(() => {
 //     database.ref().off();
 //   }, 9000);
 
-//   // remove a specific subscription
+//   // unsubscribe from a specific subscription
 //  setTimeout(() => {
 //     database.ref().off(onValueChange);
 //   }, 9000);
@@ -190,6 +190,7 @@ import * as firebase from 'firebase';
 //         console.log('remove failed');
 //     })
    
+
 
 // remove everything with remove
 // database.ref()
