@@ -61,6 +61,20 @@ export const editExpense = (id, updates) => ({
     updates
 });
 
+// Function used by redux-thunk middleware.
+// this function fetches updates an expense in firebase, and then dispatches action editExpense
+// to update redux
+export const startEditExpense = (id, updates) => {
+    return (dispatch) => {
+        // update expense in firebase
+        return database.ref(`expenses/${id}`).update(updates).then(() => {
+            dispatch(editExpense(id, updates));  // update redux store
+        });
+    };
+};
+
+
+
 //SET_EXPENSES; passes in array of all expenses in our fixture. This is called before
 //              each test case to initiale expenses.
 export const setExpenses = (expenses) => ({

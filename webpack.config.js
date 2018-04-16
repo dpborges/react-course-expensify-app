@@ -1,3 +1,8 @@
+// =====================================================
+// Q: Where do you set NODE_ENV variable?
+// A: In package.json
+// =====================================================
+
 // Load node.js path module
 const path = require('path');
 
@@ -15,8 +20,6 @@ if (process.env.NODE_ENV === 'test') {
  } else if (process.env.NODE_ENV === 'development')  {           // all values in those files
     require('dotenv').config({ path: '.env.development' });
  }
-
-
 
 // Note that entry was able to take a relative path while output and devserver require an 
 // absolute path, hence why use path.join node.js function.

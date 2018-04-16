@@ -2,7 +2,9 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import  { startAddExpense, addExpense, 
           editExpense, removeExpense, 
-          setExpenses, startSetExpenses, startRemoveExpense } from '../../actions/expenses';
+          setExpenses, startSetExpenses, 
+          startRemoveExpense, startEditExpense 
+} from '../../actions/expenses';
 import  expenses from '../fixtures/expenses';
 import { create } from 'domain';
 import database from '../../firebase/firebase';
@@ -43,7 +45,6 @@ test('should setup remove expense from firebase', (done) => {
 });
 
 
-
 test('should setup edit expense action object', () => {
     const action = editExpense('123abc', { note: 'recommend to others'});
     expect(action).toEqual({
@@ -52,6 +53,31 @@ test('should setup edit expense action object', () => {
         updates: { note: 'recommend to others'}
     })
 });
+
+test('should edit expense object in firebase', (done) => {
+    const store = createMockStore({}); 
+    // 
+    // const id = 'L9wS5ITeVQhNcxgc_Rj';
+    const id = expenses[0].id;
+    const updates = { note: 'this is test note' };
+   
+    store.dispatch(startEditExpense(id, updates)).then(() => {
+        const actions = store.getActions();  // returns an array of actions from the mock store
+        expect(actions[0]).toEqual({        // confirm event startEditExpense was dispatched
+            type: 'EDIT_EXPENSE',
+            id, 
+            updates
+        });
+        // Verify that expense was updated in firebase database, which returns a promise
+        return database.ref(`expenses/${id}`).once('value');
+        
+    }).then((snapshot) => {
+        expect(snapshot.val().note).toBe(updates.note); 
+        done();
+    });    
+});
+
+
 
 test('should set up add expense action object with provided values', () => {
     const action = addExpense(expenses[2]);
