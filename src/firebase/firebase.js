@@ -18,13 +18,13 @@ import * as firebase from 'firebase';
     messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID
   };
 
-
-
   firebase.initializeApp(config);
 
   const database = firebase.database();
+  // set up provider so firebase can authenticate with google
+  const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
 
-  export { firebase, database as  default };
+  export { firebase, googleAuthProvider, database as  default };
 
 // Add a new value using push and have firebase generate the id property
 // database.ref('expenses').push({

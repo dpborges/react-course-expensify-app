@@ -2,7 +2,7 @@ import moment from 'moment';
 import filtersReducer from '../../reducers/filters';
 
 
-// This is an event triggered by redux when your first load up your app.
+// This is an event triggered by redux when you first load up your app.
 // This is where your defaults would be used.
 
 test('should set up default filter values', () => {

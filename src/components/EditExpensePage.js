@@ -27,6 +27,7 @@ export class EditExpensePage extends React.Component  {
         // console.log('EXPENSE PAGE PROPS: ' , this.props);
         return (
             <div>
+            <h1>Edit Expense </h1>
                 <ExpenseForm
                     expense={this.props.expense}
                     onSubmit={this.onSubmit}
