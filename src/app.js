@@ -51,7 +51,7 @@ firebase.auth().onAuthStateChanged((user) => {
         store.dispatch(login(user.uid)); // call login action to save uid in store
         store.dispatch(startSetExpenses()).then(() => {
             // render application after fetching an array of expenses from firebase 
-            // and using it to set state
+            // and setting state
             renderApp();    
             // Use history to get access to user's current "location"
             // This will also remain on same page upon page refresh
@@ -63,7 +63,7 @@ firebase.auth().onAuthStateChanged((user) => {
         console.log(`logged out`);
         store.dispatch(logout()); // call logout action to clear uid from store
         renderApp();
-        history.push('/');   // Brings user back, or redirects , to login page upon logout
+        history.push('/');   // Brings user back, or redirects, to login page upon logout
     }
 })
 

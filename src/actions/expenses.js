@@ -10,8 +10,12 @@ export const addExpense = (expense) => ({
 // Function used by middleware redux-thunk
 // this function takes expense data as an argument and returns a function that takes 
 // dispatch as an argument while expense data is already been bound to the function.
+// Note that actions have access to both dispatch (1st parm) and getState (2nd parm).
+// This is used to obtain uid.
 export const startAddExpense = (expenseData = {}) => {
-    return (dispatch) => {
+    return (dispatch, getState) => {
+        // Obtain uid from global redux store
+        const uid = getState().auth.uid;
         // the const below is using destructuring to assign properties of expenseData 
         // object to the individual fields. The fields are then used below to construct
         // the expense object.
@@ -24,7 +28,7 @@ export const startAddExpense = (expenseData = {}) => {
         const expense = { description, note, amount, createdAt };
 
         // add expense to firebase
-        return database.ref('expenses').push(expense).then((ref) => {
+        return database.ref(`users/${uid}/expenses`).push(expense).then((ref) => {
             // update redux store
             dispatch(addExpense({
                 id: ref.key,
@@ -44,10 +48,12 @@ export const removeExpense = ( { id } = {}) => ({
 // This function takes id as an argument, removes expense from firebase
 // and dispatches an action to update redux store.
 export const startRemoveExpense = ({ id } = {}) => {
-    return (dispatch) => {
-        return database.ref(`expenses/${id}`).remove().then(() => {
-                // dispatch action to update redux store
-                dispatch(removeExpense({ id  }));
+    return (dispatch, getState) => {
+        // Obtain uid from global redux store
+        const uid = getState().auth.uid;
+        return database.ref(`users/${uid}/expenses/${id}`).remove().then(() => {
+            // dispatch action to update redux store
+            dispatch(removeExpense({ id  }));
         });
     ;}
 };
@@ -65,9 +71,12 @@ export const editExpense = (id, updates) => ({
 // this function fetches updates an expense in firebase, and then dispatches action editExpense
 // to update redux
 export const startEditExpense = (id, updates) => {
-    return (dispatch) => {
+    return (dispatch, getState) => {
+        // Obtain uid from global redux store
+        const uid = getState().auth.uid;
+        console.log('startEditExpense function; uid property is ', uid );
         // update expense in firebase
-        return database.ref(`expenses/${id}`).update(updates).then(() => {
+        return database.ref(`users/${uid}/expenses/${id}`).update(updates).then(() => {
             dispatch(editExpense(id, updates));  // update redux store
         });
     };
@@ -87,10 +96,12 @@ export const setExpenses = (expenses) => ({
 // this function fetches data from firebase, parses data into an array, and dispatches
 // SET_EXPENSES
 export const startSetExpenses = () => {
-    return (dispatch) => {
+    return (dispatch, getState) => {
+        // Obtain uid from global redux store
+        const uid = getState().auth.uid;
         // fetch data from firebase
         const expenses = [];
-        return database.ref('expenses').once('value').then((snapshot) => {
+        return database.ref(`users/${uid}/expenses`).once('value').then((snapshot) => {
             // parse data into an array
             snapshot.forEach((childSnapshot) => {
                 expenses.push({
